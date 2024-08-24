@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>
+    <title>Restaurant Detail</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #e84a5f;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        p.label {
+            font-weight: bold;
+            color: #555;
+        }
+        a {
+            display: inline-block;
+            text-decoration: none;
+            color: #e84a5f;
+            font-size: 18px;
+            margin-top: 20px;
+            text-align: center;
+            border: 1px solid #e84a5f;
+            border-radius: 4px;
+            padding: 10px 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        a:hover {
+            background-color: #e84a5f;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if restaurant %}
+            <h1>{{ restaurant.get('Restaurant Name', 'Restaurant Not Found') }}</h1>
+        
+        {% if restaurant['Country Code'] %}
+            <p><span class="label">Country:</span> {{ country_name }}</p>
+        {% endif %}
+        
+        {% if restaurant['City'] %}
+            <p><span class="label">City:</span> {{ restaurant['City'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Address'] %}
+            <p><span class="label">Address:</span> {{ restaurant['Address'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Locality'] %}
+            <p><span class="label">Locality:</span> {{ restaurant['Locality'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Locality Verbose'] %}
+            <p><span class="label">Locality Verbose:</span> {{ restaurant['Locality Verbose'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Longitude'] %}
+            <p><span class="label">Longitude:</span> {{ restaurant['Longitude'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Latitude'] %}
+            <p><span class="label">Latitude:</span> {{ restaurant['Latitude'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Cuisines'] %}
+            <p><span class="label">Cuisines:</span> {{ restaurant['Cuisines'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Average Cost for two'] %}
+            <p><span class="label">Average Cost for Two:</span> {{ restaurant['Average Cost for two'] }} {{ restaurant['Currency'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Has Table booking'] %}
+            <p><span class="label">Has Table Booking:</span> {{ restaurant['Has Table booking'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Has Online delivery'] %}
+            <p><span class="label">Has Online Delivery:</span> {{ restaurant['Has Online delivery'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Is delivering now'] %}
+            <p><span class="label">Is Delivering Now:</span> {{ restaurant['Is delivering now'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Switch to order menu'] %}
+            <p><span class="label">Switch to Order Menu:</span> {{ restaurant['Switch to order menu'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Price range'] %}
+            <p><span class="label">Price Range:</span> {{ restaurant['Price range'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Aggregate rating'] %}
+            <p><span class="label">Aggregate Rating:</span> {{ restaurant['Aggregate rating'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Rating color'] %}
+            <p><span class="label">Rating Color:</span> {{ restaurant['Rating color'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Rating text'] %}
+            <p><span class="label">Rating Text:</span> {{ restaurant['Rating text'] }}</p>
+        {% endif %}
+        
+        {% if restaurant['Votes'] %}
+            <p><span class="label">Votes:</span> {{ restaurant['Votes'] }}</p>
+        {% endif %}
+        {% else %}
+            <h1>Restaurant Not Found</h1>
+            <p>The restaurant you are looking for does not exist.</p>
+        {% endif %}
+        <a href="/">Back to List</a>
+    </div>
+</body>
+</html>

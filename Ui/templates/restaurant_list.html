@@ -1,0 +1,297 @@
+<!doctype html>
+<html>
+<head>
+    <title>Restaurant List</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #e84a5f;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+        }
+        header img {
+            max-width: 120px;
+            vertical-align: middle;
+        }
+        h1 {
+            margin: 20px 0;
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        form div {
+            margin: 10px 0;
+        }
+        form input, form select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        form button {
+            background-color: #e84a5f;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        form button:hover {
+            background-color: #d7354d;
+        }
+        .dropdown-container {
+            position: relative;
+        }
+        .dropdown {
+            position: absolute;
+            width: 100%;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .dropdown-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+        .search-bar {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            background: #ffffff;
+            margin: 10px auto;
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s, transform 0.3s;
+        }
+        li:hover {
+            background: #f9f9f9;
+            transform: scale(1.02);
+        }
+        a {
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+        a:hover {
+            color: #e84a5f;
+        }
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pagination a {
+            color: #e84a5f;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: 1px solid #e84a5f;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .pagination a:hover {
+            background-color: #e84a5f;
+            color: #ffffff;
+        }
+        .no-results {
+            text-align: center;
+            color: #e84a5f;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .clear-button {
+            background-color: #ccc;
+            color: #333;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .clear-button:hover {
+            background-color: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFO2L-aHACMsHwJHo1RjBpPJQL-uEB7jp1TMiu4W9__3Ri8aVipbqWjWKVk9-mi-q5Rwk&usqp=CAU" alt="Zomato Logo">
+    </header>
+    <h1>Restaurant List</h1>
+    
+    <div class="container">
+        <form method="GET" action="/">
+            <div>
+                <input type="text" name="search" placeholder="Search by Restaurant Name..." value="{{ search }}">
+            </div>
+            <div class="dropdown-container">
+                <input type="text" id="countryInput" placeholder="Select Country" readonly value="{{ countries[country] if country else '' }}">
+                <input type="hidden" name="country" id="selectedCountry" value="{{ country }}">
+                <div id="countryDropdown" class="dropdown" style="display: none;">
+                    <input type="text" id="countrySearch" class="search-bar" placeholder="Search...">
+                    <div id="countryList">
+                        {% for code, name in countries.items() %}
+                            <div class="dropdown-item" data-code="{{ code }}">{{ name }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="dropdown-container">
+                <input type="text" id="cuisineInput" placeholder="Select Cuisine" readonly value="{{ cuisines }}">
+                <input type="hidden" name="cuisines" id="selectedCuisine" value="{{ cuisines }}">
+                <div id="cuisineDropdown" class="dropdown" style="display: none;">
+                    <input type="text" id="cuisineSearch" class="search-bar" placeholder="Search...">
+                    <div id="cuisineList">
+                        {% for cuisine in cuisines_list %}
+                            <div class="dropdown-item">{{ cuisine }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div>
+                <input type="number" name="avg_spend" placeholder="Max Average Spend for Two" value="{{ avg_spend }}">
+            </div>
+            <div>
+                <button type="submit">Filter</button>
+            </div>
+            <div>
+                <button type="button" class="clear-button" id="clearFilters">Clear Filters</button>
+            </div>
+        </form>
+
+        {% if restaurants %}
+            <ul>
+                {% for restaurant in restaurants %}
+                    <li><a href="{{ url_for('restaurant_detail', id=restaurant['Restaurant ID']) }}">{{ restaurant['Restaurant Name'] }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-results">No restaurants found for the selected filters.</div>
+        {% endif %}
+
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('restaurant_list', page=page-1, country=country, avg_spend=avg_spend, cuisines=cuisines, search=search) }}">Previous</a>
+            {% endif %}
+            <a href="{{ url_for('restaurant_list', page=page+1, country=country, avg_spend=avg_spend, cuisines=cuisines, search=search) }}">Next</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const countryInput = document.getElementById('countryInput');
+            const countryDropdown = document.getElementById('countryDropdown');
+            const countrySearch = document.getElementById('countrySearch');
+            const countryList = document.getElementById('countryList');
+            const selectedCountry = document.getElementById('selectedCountry');
+
+            const cuisineInput = document.getElementById('cuisineInput');
+            const cuisineDropdown = document.getElementById('cuisineDropdown');
+            const cuisineSearch = document.getElementById('cuisineSearch');
+            const cuisineList = document.getElementById('cuisineList');
+            const selectedCuisine = document.getElementById('selectedCuisine');
+
+            const clearFiltersButton = document.getElementById('clearFilters');
+
+            countryInput.addEventListener('click', function () {
+                countryDropdown.style.display = countryDropdown.style.display === 'none' ? 'block' : 'none';
+            });
+
+            countrySearch.addEventListener('input', function () {
+                const searchTerm = countrySearch.value.toLowerCase();
+                const items = countryList.getElementsByClassName('dropdown-item');
+                Array.from(items).forEach(item => {
+                    if (item.textContent.toLowerCase().includes(searchTerm)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            countryList.addEventListener('click', function (e) {
+                if (e.target.classList.contains('dropdown-item')) {
+                    const selectedName = e.target.textContent;
+                    const selectedCode = e.target.getAttribute('data-code');
+                    countryInput.value = selectedName;
+                    selectedCountry.value = selectedCode;
+                    countryDropdown.style.display = 'none';
+                }
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!countryDropdown.contains(e.target) && e.target !== countryInput) {
+                    countryDropdown.style.display = 'none';
+                }
+            });
+
+            cuisineInput.addEventListener('click', function () {
+                cuisineDropdown.style.display = cuisineDropdown.style.display === 'none' ? 'block' : 'none';
+            });
+
+            cuisineSearch.addEventListener('input', function () {
+                const searchTerm = cuisineSearch.value.toLowerCase();
+                const items = cuisineList.getElementsByClassName('dropdown-item');
+                Array.from(items).forEach(item => {
+                    if (item.textContent.toLowerCase().includes(searchTerm)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            cuisineList.addEventListener('click', function (e) {
+                if (e.target.classList.contains('dropdown-item')) {
+                    const selectedValue = e.target.textContent;
+                    cuisineInput.value = selectedValue;
+                    selectedCuisine.value = selectedValue;
+                    cuisineDropdown.style.display = 'none';
+                }
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!cuisineDropdown.contains(e.target) && e.target !== cuisineInput) {
+                    cuisineDropdown.style.display = 'none';
+                }
+            });
+
+            clearFiltersButton.addEventListener('click', function () {
+                window.location.href = '/';
+            });
+        });
+    </script>
+</body>
+</html>
